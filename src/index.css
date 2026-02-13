@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Masquer le badge reCAPTCHA */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
