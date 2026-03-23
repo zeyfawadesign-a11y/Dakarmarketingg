@@ -176,13 +176,6 @@ export default function Chatbot() {
     setIsSending(true);
     
     try {
-      const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Configuration manquante');
-      }
-
       const formattedDate = new Date(formData.date).toLocaleDateString('fr-FR', {
         weekday: 'long',
         day: 'numeric',
@@ -190,13 +183,13 @@ export default function Chatbot() {
         year: 'numeric'
       });
 
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          // recaptchaToken is optional here if you don't use reCAPTCHA in this widget
           type: 'chatbot',
           data: {
             name: formData.name,

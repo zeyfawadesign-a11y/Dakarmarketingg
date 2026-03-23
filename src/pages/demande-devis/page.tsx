@@ -57,13 +57,6 @@ export default function DemandeDevisPage() {
 
       const recaptchaToken = await executeRecaptcha('submit_devis');
 
-      const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Configuration Supabase manquante');
-      }
-
       console.log('Envoi du formulaire de devis...', {
         nom: formData.nom,
         prenom: formData.prenom,
@@ -71,29 +64,32 @@ export default function DemandeDevisPage() {
         entreprise: formData.entreprise
       });
 
-      // 2. Envoyer avec le token reCAPTCHA
-      const edgeResponse = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const edgeResponse = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           type: 'devis',
           data: {
             nom: formData.nom,
             prenom: formData.prenom,
+            name: `${formData.prenom} ${formData.nom}`.trim(),
             email: formData.email,
             telephone: formData.telephone,
+            phone: formData.telephone,
             entreprise: formData.entreprise,
+            company: formData.entreprise,
             secteur: formData.secteur,
             poste: formData.poste,
             typeService: formData.typeService,
+            service: formData.typeService,
             budget: formData.budget,
             delai: formData.delai,
-            description: formData.description
+            description: formData.description,
+            message: formData.description
           },
-          recaptchaToken // ← Token reCAPTCHA pour validation serveur
+          recaptchaToken
         })
       });
 

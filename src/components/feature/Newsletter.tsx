@@ -37,18 +37,10 @@ export default function Newsletter({ variant = 'default', showTitle = true }: Ne
     setStatus('loading');
 
     try {
-      const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Configuration Supabase manquante');
-      }
-
-      const edgeResponse = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const edgeResponse = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           type: 'newsletter',

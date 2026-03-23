@@ -5,13 +5,6 @@ import { trackFormSubmission } from '../../../utils/analytics';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export default function Contact() {
-  // 🔍 LOGS DE DEBUG - Variables d'environnement
-  console.log('🔍 DEBUG Variables env:');
-  console.log('RECAPTCHA_SITE_KEY:', import.meta.env.VITE_PUBLIC_RECAPTCHA_SITE_KEY);
-  console.log('SUPABASE_URL:', import.meta.env.VITE_PUBLIC_SUPABASE_URL);
-  console.log('SUPABASE_ANON:', import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...');
-  console.log('Toutes les vars:', import.meta.env);
-
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [formData, setFormData] = useState({
     nom: '',
@@ -37,29 +30,23 @@ export default function Contact() {
 
       const recaptchaToken = await executeRecaptcha('submit_contact');
 
-      const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Configuration Supabase manquante');
-      }
-
-      // 2. Envoyer avec le token reCAPTCHA
-      const edgeResponse = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      const edgeResponse = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           type: 'contact',
           data: {
             nom: formData.nom,
+            prenom: '',
+            name: `${formData.nom}`,
             email: formData.email,
             entreprise: formData.entreprise,
+            company: formData.entreprise,
             message: formData.message
           },
-          recaptchaToken // Ajouter le token pour validation côté serveur
+          recaptchaToken
         })
       });
 

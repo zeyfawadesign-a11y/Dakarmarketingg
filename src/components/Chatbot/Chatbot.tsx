@@ -277,17 +277,24 @@ export default function Chatbot() {
         recaptchaToken // ← IMPORTANT : Ajouter le token
       };
 
-      const response = await fetch(
-        'https://tqjaxwapjrhmezpwkgto.supabase.co/functions/v1/send-email',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...payload,
+          type: 'chatbot_lead',
+          data: {
+            name: payload.data.name,
+            email: payload.data.email,
+            phone: payload.data.phone,
+            service: payload.data.service,
+            date: payload.data.preferred_date,
+            message: payload.data.notes
+          }
+        })
+      });
 
       const result = await response.json();
 
