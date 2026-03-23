@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react-swc";
 import { resolve } from "node:path";
 import AutoImport from "unplugin-auto-import/vite";
 
-const base = process.env.BASE_PATH || "/";
+// Forcer "/" en production, sinon utiliser BASE_PATH pour preview
+const base = process.env.NODE_ENV === 'production' && !process.env.BASE_PATH
+  ? "/"
+  : (process.env.BASE_PATH || "/");
 const isPreview = process.env.IS_PREVIEW ? true : false;
 // https://vite.dev/config/
 export default defineConfig({
