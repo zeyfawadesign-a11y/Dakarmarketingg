@@ -107,5 +107,6 @@ jspm_packages/
 *.crt
 *.key
 
-# Security files
-SECURITY.md
+# Security test scripts
+test-security.sh
+test-security.bat
