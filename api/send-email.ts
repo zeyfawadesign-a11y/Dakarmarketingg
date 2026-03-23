@@ -20,12 +20,41 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#039;');
 }
 
-// Connexion MongoDB avec cache
+// Connexion MongoDB avec cache et sécurité renforcée
 async function connectToDatabase() {
   if (cachedDb) return cachedDb;
 
-  const client = await MongoClient.connect(MONGODB_URI);
+  // Validation de sécurité de l'URI
+  if (!MONGODB_URI || !MONGODB_URI.includes('@')) {
+    throw new Error('Invalid MongoDB URI - missing credentials');
+  }
+
+  if (!MONGODB_URI.startsWith('mongodb+srv://')) {
+    throw new Error('Invalid MongoDB URI - must use SRV connection');
+  }
+
+  const client = await MongoClient.connect(MONGODB_URI, {
+    // Options de sécurité renforcées
+    maxPoolSize: 10,
+    minPoolSize: 2,
+    maxIdleTimeMS: 30000,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    retryWrites: true,
+    retryReads: true,
+    w: 'majority',
+    readPreference: 'primaryPreferred',
+    // Sécurité TLS
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+    tlsAllowInvalidHostnames: false,
+  });
+
   const db = client.db('dakarmarketing');
+
+  // Log sécurisé (sans exposer les credentials)
+  console.log('✅ Connected to MongoDB successfully');
+
   cachedDb = db;
   return db;
 }
@@ -127,9 +156,35 @@ function confirmationClient(type: string, d: any) {
 
 const rateLimitMap = new Map<string, number[]>();
 
+// Domaines autorisés pour les requêtes
+const ALLOWED_ORIGINS = [
+  'https://dakarmarketing.sn',
+  'https://www.dakarmarketing.sn',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://dakarmarketing.vercel.app',
+];
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+  const origin = req.headers.origin || req.headers.referer || '';
+
+  // Validation d'origine en production
+  if (process.env.NODE_ENV === 'production' && !ALLOWED_ORIGINS.some(allowed => origin.includes(allowed))) {
+    console.warn(`🚫 Origin not allowed: ${origin}`);
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
+
+  // Headers CORS sécurisés
+  res.setHeader('Access-Control-Allow-Origin', origin || ALLOWED_ORIGINS[0]);
+  res.setHeader('Access-Control-Allow-Headers', 'content-type, authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Max-Age', '86400');
+
+  // Headers de sécurité supplémentaires
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

@@ -1,6 +1,5 @@
 
 import { usePageTracking } from '../../hooks/usePageTracking';
-import { trackCTAClick } from '../../utils/analytics';
 import { motion } from 'framer-motion';
 import Navbar from '../home/components/Navbar';
 import Footer from '../home/components/Footer';

@@ -1,22 +1,12 @@
 import { usePageTracking } from '../../../hooks/usePageTracking';
 import { trackCTAClick } from '../../../utils/analytics';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import Navbar from '../../home/components/Navbar';
 import Footer from '../../home/components/Footer';
 
 export default function EnquetesMarketingPage() {
   usePageTracking();
   const navigate = useNavigate();
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToContact = () => {
     trackCTAClick('Demander un Devis', 'Enquetes Marketing Page');
@@ -195,7 +185,7 @@ export default function EnquetesMarketingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar isScrolled={isScrolled} />
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -320,7 +310,7 @@ export default function EnquetesMarketingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {prestations.map((prestation, index) => (
+            {prestations.map((prestation, _) => (
               <div
                 key={prestation.title}
                 className="bg-gray-50 rounded-lg p-8 hover:bg-red-50 transition-all duration-300 group"
@@ -355,7 +345,7 @@ export default function EnquetesMarketingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {methodology.map((step, index) => (
+            {methodology.map((step, _) => (
               <div
                 key={step.title}
                 className="bg-white rounded-lg p-8 shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group"
