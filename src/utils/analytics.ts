@@ -1,4 +1,5 @@
-import { supabase } from './supabase';
+// Supabase analytics disabled - migrate to API if needed
+// import { supabase } from './supabase';
 
 interface AnalyticsEvent {
   event_type: string;
@@ -60,13 +61,9 @@ export const trackEvent = async (
       metadata: metadata || undefined,
     };
 
-    const { error } = await supabase
-      .from('analytics_events')
-      .insert([event]);
-
-    if (error) {
-      console.error('Analytics event error:', error);
-    }
+    // Analytics logging disabled - using console only
+    // TODO: Migrate to MongoDB API if needed
+    console.log('Analytics event:', { eventType, eventName, metadata });
   } catch (error) {
     console.error('Analytics error:', error);
   }

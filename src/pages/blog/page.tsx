@@ -4,7 +4,7 @@ import Navbar from '../home/components/Navbar';
 import Footer from '../home/components/Footer';
 import { useEffect, useState } from 'react';
 import { trackPageView } from '../../utils/analytics';
-import { supabase } from '../../utils/supabase';
+// Supabase removed - using mock data instead
 
 interface BlogPost {
   id: string;
@@ -30,14 +30,9 @@ export default function BlogPage() {
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPosts(data || []);
+      // TODO: Replace with MongoDB API call if needed for dynamic blog posts
+      // For now, using static mock data
+      setPosts(mockPosts);
     } catch (error) {
       console.error('Error fetching blog posts:', error);
     } finally {

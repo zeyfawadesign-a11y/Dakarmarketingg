@@ -4,7 +4,7 @@ import Navbar from '../home/components/Navbar';
 import Footer from '../home/components/Footer';
 import { useEffect, useState } from 'react';
 import { trackPageView } from '../../utils/analytics';
-import { supabase } from '../../utils/supabase';
+// Supabase removed - using mock data instead
 
 interface CaseStudy {
   id: string;
@@ -30,14 +30,9 @@ export default function CaseStudiesPage() {
 
   const fetchCaseStudies = async () => {
     try {
-      const { data, error } = await supabase
-        .from('case_studies')
-        .select('*')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setCaseStudies(data || []);
+      // TODO: Replace with MongoDB API call if needed for dynamic case studies
+      // For now, using static mock data
+      setCaseStudies(mockCaseStudies);
     } catch (error) {
       console.error('Error fetching case studies:', error);
     } finally {

@@ -332,7 +332,7 @@ export default function Chatbot() {
     setState(prev => ({ ...prev, currentStep: 'sending' }));
     addBotMessage('Envoi en cours...', 300);
 
-    // Envoyer vers Supabase
+    // Envoyer vers API Vercel
     setTimeout(() => {
       sendToSupabase();
     }, 1000);
